@@ -65,10 +65,10 @@ max_int=ones(Cd==max(Cd)) %pour trouver la proteine correspodante
 %% centralité par valeur propre
 
 
-%enlever par ce que cela prend pas mal de temps
-%[vecM_A,valM_A]=eig(M_A);  %vecM_A est la matrice de passage avec les vecteurs propres associé aux valeurs propres dans l'ordre croissant,
+
+[vecM_A,valM_A]=eigs(M_A);  %vecM_A est la matrice de passage avec les vecteurs propres associé aux valeurs propres dans l'ordre croissant,
                             %valM_A est la matrice diagonale
-Ce = vecM_A(:,length(vecM_A));  %vecteur propre associé a la plus grande valeur propre
+Ce = vecM_A(:,1);  %vecteur propre associé a la plus grande valeur propre
 
 max_int = ones(Ce==max(Ce))
 
