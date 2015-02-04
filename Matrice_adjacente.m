@@ -2,21 +2,29 @@
 % a regader : unique
 % uiimport
 
+%% Introduction
+
 A = EntrezGeneInteractorA;
 B = EntrezGeneInteractorB;
 
 A1 = unique(A); %creation d'un vecteur d'unique pour les genes A
 B1 = unique(B); %creation d'un vecteur d'unique pour les genes B
 
-ones = unique([A1;B1]);  %creation d'un vecteur d'unique pour les 2 genes
+ones = unique([A1;B1]);  %creation d'un vecteur d'unique pour les 2 gene
 
 M_A= zeros(length(ones)-2); %création d'une matrice M_A remplie de 0 de coté = a la longueur de ones -2 car les deux derniers termes de ones sont NA 
 
 
-%===========================================================================
-% construction de la matrice d'adjacence A%%
-%===========================================================================
-for i = 1 : 1 : length(ones)-2
+ones([length(ones),length(ones)-1])=[];
+
+
+
+
+
+
+%% construction de la matrice d'adjacence A%%
+
+for i = 1 : 1 : length(ones)
     z1 = find(A == ones(i)); %chercher les indices dans A des valeurs uniques de ones
     z2 = find(B == ones(i)); %chercher les indices dans B des valeurs uniques de ones
     
@@ -31,26 +39,30 @@ for i = 1 : 1 : length(ones)-2
 end;
 
 
-%% 
 
 
-%===========================================================================
-% le degré de centralité
-%===========================================================================
-d = find(M_A>0);
-n = length(d);
-Cd = zeros(length(ones)-2,1);
 
 
-for i = 1 : 1 : n/2
-    Cd(i) = M_A( d(i) ) /(n-1);
+
+
+
+
+
+%% le degré de centralité
+%==========================================================================================================
+
+%% degré de centralité
+n = sum(M_A);
+Cd = zeros(length(ones),1);
+max_interaction = sum(sum(M_A))-1;
+
+for i = 1 : 1 : length(ones)
+    Cd(i) = n(i) /max_interaction;
 end; % trouvé toutes les centralités de degré
 
-%% 
+ones(Cd==max(Cd)) %pour trouver la proteine correspodante
 
-
-M_A(d(Cd==max(Cd))); % nombre d'interaction = 9
-ones(mod(d(Cd==max(Cd)),length(ones)-2)); %pour trouver la proteine correspodante
+%% centralité par valeur propre
 
 
 %enlever par ce que cela prend pas mal de temps
@@ -58,58 +70,51 @@ ones(mod(d(Cd==max(Cd)),length(ones)-2)); %pour trouver la proteine correspodant
                             %valM_A est la matrice diagonale
 Ce = vecM_A(:,length(vecM_A));  %vecteur propre associé a la plus grande valeur propre
 
+ones(Ce==max(Ce))
 
+%% regresion lineaire avec les max
 p1 = polyfit(Ce,Cd,1);  %retour matrice avec Cd = p(1)*Ce+p(2)
-%plot(Ce,Cd,'o',Ce,p1(1)*Ce+p1(2));
+plot(Ce,Cd,'o',Ce,p1(1)*Ce+p1(2));
 
-r1=abs(Cd-p1(1)*Ce-p1(2));  % residue avec les max 
+r1 = abs(Cd-p1(1)*Ce-p1(2));  % residue avec les max 
 
-
-
-
-%% 
+max(r1)
 
 
-%======================================
-%enlevé les max
-%======================================
+%% regresion lineaire sans les max
+
 Ce1=Ce;
 Cd1=Cd;
-Ce1(Ce == max(Ce))=0;
-Cd1(Cd == max(Cd))=0;
+Ce1(Ce == max(Ce))=[];
+Cd1(Cd == max(Cd))=[];
 
 p2 = polyfit(Ce1,Cd1,1);  %retour matrice avec Cd = p(1)*Ce+p(2)
 plot(Ce1,Cd1,'o',Ce1,p2(1)*Ce1+p2(2));
 
-r2=abs(Cd1-p2(1)*Ce1-p2(2)); %residue sans les max
+r2=abs(Cd1-(p2(1)*Ce1-p2(2))); %residue sans les max
 
 
-abs(r2-r1);  %difference des residues de l'ordre du 10^-7
+max(r2)
 
-
-
-
-
+abs(max(r2)-max(r1))
 
 
 
 
 
-%% 
 
 
-%===========================================================================
-%question ranking
-%===========================================================================
+
+
+%% ranking
+%===========================================================================================================================
+%%
+
 [rCd,rCd1] = sort(Cd,'descend'); %rCd est le vecteur dont valeurs de Cd sont triée
-                       %rCd1 est le vecteur dont les rangs des valeurs de Cd sont trié
-[~,rank_Cd]= sort(rCd1,'descend');
+                                 %rCd1 est le vecteur dont les rangs des valeurs de Cd sont trié
  
 [rCe,rCe1] = sort(Ce,'descend');
-[~,rank_Ce]= sort(rCe1,'descend');
-%% 
 
-rank_Cd([1:9])=[];
 
 %% 
 
@@ -117,7 +122,7 @@ rank_Cd([1:9])=[];
 compare=zeros(40,1);
 %compare les 40 1ere valeurs des vecteurs
 for i = 1 : 1 : 40
-    compare(i,1) = abs(rank_Cd(i)-rank_Ce(i));
+    compare(i,1) = abs(rCd1(i)-rCe1(i));
 end;
 
 
@@ -125,11 +130,45 @@ end;
 
 
 
-proteine=zeros(40,1);
+proteine=zeros(40,2);
 %Pour voir les proteine correspondant
 for i = 1 : 1 : 40
-        proteine(i)=ones(mod(d(Cd==rCd(rank_Cd(i))),length(ones)-2));
-end;
+        proteine(i,1) = ones(rCd1(i));
+end
+
+for i = 1 : 1 : 40
+        proteine(i,2) = ones(rCe1(i));
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
