@@ -15,7 +15,7 @@ ones = unique([A1;B1]);  %creation d'un vecteur d'unique pour les 2 gene
 M_A= zeros(length(ones)-2); %création d'une matrice M_A remplie de 0 de coté = a la longueur de ones -2 car les deux derniers termes de ones sont NA 
 
 
-ones([length(ones),length(ones)-1])=[];
+ones([length(ones),length(ones)-1])=[]; %Supprimer les deux derniere valeurs (qui sont NA et NA)
 
 
 
@@ -110,10 +110,11 @@ diff_max_r = abs(max(r2)-max(r1))
 %===========================================================================================================================
 %%
 
-[rCd,rCd1] = sort(Cd,'descend'); %rCd est le vecteur dont valeurs de Cd sont triée
+[~,rCd] = sort(Cd,'descend'); %rCd est le vecteur dont valeurs de Cd sont triée
                                  %rCd1 est le vecteur dont les rangs des valeurs de Cd sont trié
+
  
-[rCe,rCe1] = sort(Ce,'descend');
+[~,rCe] = sort(Ce,'descend');
 
 
 %% 
@@ -122,7 +123,7 @@ diff_max_r = abs(max(r2)-max(r1))
 compare=zeros(40,1);
 %compare les 40 1ere valeurs des vecteurs
 for i = 1 : 1 : 40
-    compare(i,1) = abs(rCd1(i)-rCe1(i));
+    compare(i,1) = abs(rCd(i)-rCe(i));
 end;
 
 
@@ -133,11 +134,11 @@ end;
 proteine=zeros(40,2);
 %Pour voir les proteine correspondant
 for i = 1 : 1 : 40
-        proteine(i,1) = ones(rCd1(i));
+        proteine(i,1) = ones(rCd(i));
 end
 
 for i = 1 : 1 : 40
-        proteine(i,2) = ones(rCe1(i));
+        proteine(i,2) = ones(rCe(i));
 end
 
 
