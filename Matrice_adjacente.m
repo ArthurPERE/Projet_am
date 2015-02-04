@@ -60,7 +60,7 @@ for i = 1 : 1 : length(ones)
     Cd(i) = n(i) /max_interaction;
 end; % trouvé toutes les centralités de degré
 
-ones(Cd==max(Cd)) %pour trouver la proteine correspodante
+max_int=ones(Cd==max(Cd)) %pour trouver la proteine correspodante
 
 %% centralité par valeur propre
 
@@ -70,7 +70,7 @@ ones(Cd==max(Cd)) %pour trouver la proteine correspodante
                             %valM_A est la matrice diagonale
 Ce = vecM_A(:,length(vecM_A));  %vecteur propre associé a la plus grande valeur propre
 
-ones(Ce==max(Ce))
+max_int = ones(Ce==max(Ce))
 
 %% regresion lineaire avec les max
 p1 = polyfit(Ce,Cd,1);  %retour matrice avec Cd = p(1)*Ce+p(2)
@@ -78,7 +78,7 @@ plot(Ce,Cd,'o',Ce,p1(1)*Ce+p1(2));
 
 r1 = abs(Cd-p1(1)*Ce-p1(2));  % residue avec les max 
 
-max(r1)
+max_r1=max(r1)
 
 
 %% regresion lineaire sans les max
@@ -94,9 +94,9 @@ plot(Ce1,Cd1,'o',Ce1,p2(1)*Ce1+p2(2));
 r2=abs(Cd1-(p2(1)*Ce1-p2(2))); %residue sans les max
 
 
-max(r2)
+max_r2=max(r2)
 
-abs(max(r2)-max(r1))
+diff_max_r = abs(max(r2)-max(r1))
 
 
 
