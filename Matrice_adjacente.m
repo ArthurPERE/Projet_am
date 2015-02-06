@@ -8,7 +8,7 @@ B1 = unique(B); %creation d'un vecteur d'unique pour les genes B
 
 ones1 = unique([A1;B1]);  %creation d'un vecteur d'unique pour les 2 genes
 
-M_A= zeros(length(ones1)-2);
+
 
 ones1([length(ones1),length(ones1)-1])=[]; %Supprimer les deux derniere valeurs (qui sont NA et NA)
 
@@ -18,13 +18,15 @@ ones1([length(ones1),length(ones1)-1])=[]; %Supprimer les deux derniere valeurs 
 
 %% construction de la matrice d'adjacence A
 
+M_A= zeros(length(ones1));
+
 for i = 1 : 1 : length(ones1)
-    z1 = find(A == ones1(i)); %chercher les indices dans A des valeurs uniques de ones1
+    z1 = find(A1 == ones1(i)); %chercher les indices dans A des valeurs uniques de ones1
     if ~isempty(z1)  % S'il y au moins une valeur qu'on cherche dans A et dans B
         for t = 1 : 1 : length(z1) 
-            z2 = find(B == z1(t)); %chercher les indices dans B des valeurs uniques de ones1
+            z2 = find(B1 == z1(t)); %chercher les indices dans B des valeurs uniques de ones1
             if ~isempty(z2)
-                f =find(ones1 == B( z1(t) )); %chercher la valeur de associée a B(z1(t)) dans le vecteur ones pour la coordonnée j dans la matrice final
+                f =find(ones1 == B1( z1(t) )); %chercher la valeur de associée a B(z1(t)) dans le vecteur ones pour la coordonnée j dans la matrice final
                 M_A( i, f(1) )= 1 + M_A( i, f(1) ); %pour mettre les valeurs dans la matrice
                 M_A( f(1),i ) = 1 + M_A( f(1),i ); %pour mettre les valeurs dans la partie haute de la matrice pour quelle soit symetrique
             end
@@ -32,7 +34,7 @@ for i = 1 : 1 : length(ones1)
     end
 end;
 
-M_A=tab;
+
 %% le degré de centralité
 %==========================================================================================================
 
@@ -57,7 +59,7 @@ max_int = ones1(Ce==max(Ce))
 %% regresion lineaire avec les max
 p1 = polyfit(Ce,Cd,1);  %retour matrice avec Cd = p1(1)*Ce+p1(2)
 plot(Ce,Cd,'o',Ce,p1(1)*Ce+p1(2));
-text(0.04,0.06,'0.0827957087531107*Ce+0.000780913497058389')
+text(0.04,0.06,'0.0833757332095258*Ce-0.000278082785080759')
 
 r1 = abs(Cd-p1(1)*Ce-p1(2));  % residus avec les max 
 
@@ -88,7 +90,7 @@ Cd1(Cd == max(Cd))=[];
 
 p2 = polyfit(Ce1,Cd1,1);  %retour matrice avec Cd = p(1)*Ce+p(2)
 plot(Ce1,Cd1,'o',Ce1,p2(1)*Ce1+p2(2));
-text(-0.15,0.02,'-0.0118808609457656*Ce+0.000223211576972437')
+text(0.02,0.02,'0.0256757352049048*Ce+0.000117646007445322')
 
 r2=abs(Cd1-(p2(1)*Ce1-p2(2))); %residus sans les max
 m=mean(r2)
