@@ -7,10 +7,7 @@ A1 = unique(A); %creation d'un vecteur d'unique pour les genes A
 B1 = unique(B); %creation d'un vecteur d'unique pour les genes B
 
 ones1 = unique([A1;B1]);  %creation d'un vecteur d'unique pour les 2 genes
-
-
-
-ones1([length(ones1),length(ones1)-1])=[]; %Supprimer les deux derniere valeurs (qui sont NA et NA)
+ones1([length(ones1),length(ones1)-1])=[]; % Supprimer les deux derniere valeurs (qui sont NA et NA)
 
 
 
@@ -20,18 +17,28 @@ ones1([length(ones1),length(ones1)-1])=[]; %Supprimer les deux derniere valeurs 
 
 M_A= zeros(length(ones1));
 
+intA = zeros(length(A),1);
+intB = zeros(length(B),1);
+
+for i = 1 : 1 : length(A)
+    Z = find(ones1==A(i));
+    if ~isempty(Z)
+        intA(i) = Z(1);
+    end;
+end;
+
+for i = 1 : 1 : length(B)
+    Z = find(ones1==B(i));
+    if ~isempty(Z)
+        intB(i) = Z(1);
+    end;
+end;
+
 for i = 1 : 1 : length(ones1)
-    z1 = find(A1 == ones1(i)); %chercher les indices dans A des valeurs uniques de ones1
-    if ~isempty(z1)  % S'il y au moins une valeur qu'on cherche dans A et dans B
-        for t = 1 : 1 : length(z1) 
-            z2 = find(B1 == z1(t)); %chercher les indices dans B des valeurs uniques de ones1
-            if ~isempty(z2)
-                f =find(ones1 == B1( z1(t) )); %chercher la valeur de associée a B(z1(t)) dans le vecteur ones pour la coordonnée j dans la matrice final
-                M_A( i, f(1) )= 1 + M_A( i, f(1) ); %pour mettre les valeurs dans la matrice
-                M_A( f(1),i ) = 1 + M_A( f(1),i ); %pour mettre les valeurs dans la partie haute de la matrice pour quelle soit symetrique
-            end
-        end
-    end
+    if intA(i) ~= 0 && intB(i) ~= 0
+        M_A(intA(i),intB(i)) = M_A(intA(i),intB(i)) + 1;
+        M_A(intB(i),intA(i)) = M_A(intB(i),intA(i)) + 1;
+    end;
 end;
 
 
@@ -44,7 +51,7 @@ Cd = zeros(length(ones1),1);
 max_interaction = sum(sum(M_A))-1;
 
 for i = 1 : 1 : length(ones1)
-    Cd(i) = n(i) /max_interaction;
+      Cd(i) = n(i) /max_interaction;
 end; % pour trouver toutes les centralités de degré
 
 max_int=ones1(Cd==max(Cd)) %pour trouver la proteine correspondante
@@ -61,7 +68,7 @@ p1 = polyfit(Ce,Cd,1);  %retour matrice avec Cd = p1(1)*Ce+p1(2)
 plot(Ce,Cd,'o',Ce,p1(1)*Ce+p1(2));
 text(0.04,0.06,'0.0833757332095258*Ce-0.000278082785080759')
 
-r1 = abs(Cd-p1(1)*Ce-p1(2));  % residus avec les max 
+r1 = abs(Cd-p1(1)*Ce-p1(2));  % residus avec les max
 
 max_r1=max(r1)
 
@@ -70,7 +77,7 @@ m=mean(r1)
 
 
 
-
+% Pour calculer les coefficients de la regresion lineaire sans utilisé la fonction polyfit (ce qui donne la même chose)
 svdCe=ones(length(Ce),2);
 svdCe(:,1)=Ce;
 [U,S,V]=svd(svdCe);
@@ -105,7 +112,7 @@ max_diff_r=max(diff_r)
 
 
 
-
+% Pour calculer les coefficients de la regresion lineaire sans utilisé la fonction polyfit (ce qui donne la même chose)
 svdCe1=ones(length(Ce1),2);
 svdCe1(:,1)=Ce1;
 [U1,S1,V1]=svd(svdCe1);
@@ -118,32 +125,31 @@ max_r20=max(r20)
 
 %% ranking
 %===========================================================================================================================
-%%
+%% Creation des vecteurs de rang
 
 [~,rCd] = sort(Cd,'descend'); %rCd est le rang des valeurs de Cd triés
+[~,rCe] = sort(Ce,'descend');
 
  
-[x,rCe] = sort(Ce,'descend');
-
-
-%% 
-
+%% Voir pour quel proteines cela corespond
 
 proteine=zeros(40,2);
 for i = 1 : 1 : 40
-        proteine(i,1) = ones1(rCd(i));
-        proteine(i,2) = ones1(rCe(i));
+    proteine(i,1) = ones1(rCd(i));
+    proteine(i,2) = ones1(rCe(i));
 end;
 
 
+%% Voir les proteines en double
 
 cent=zeros(40,1);
 for i= 1:1:40
     z1=find(proteine(:,1)==proteine(i,2));
-    
+
     if ~isempty(z1)
         cent(i)=proteine(z1);
-    end
+    end;
 end;
+
 
 cent
