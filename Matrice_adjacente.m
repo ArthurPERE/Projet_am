@@ -34,7 +34,7 @@ for i = 1 : 1 : length(B)
     end;
 end;
 
-for i = 1 : 1 : length(ones1)
+for i = 1 : 1 : max(length(A),length(B))
     if intA(i) ~= 0 && intB(i) ~= 0
         M_A(intA(i),intB(i)) = M_A(intA(i),intB(i)) + 1;
         M_A(intB(i),intA(i)) = M_A(intB(i),intA(i)) + 1;
