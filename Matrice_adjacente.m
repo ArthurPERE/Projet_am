@@ -3,10 +3,8 @@
 A = EntrezGeneInteractorA;
 B = EntrezGeneInteractorB;
 
-A1 = unique(A); %creation d'un vecteur d'unique pour les genes A
-B1 = unique(B); %creation d'un vecteur d'unique pour les genes B
 
-ones1 = unique([A1;B1]);  %creation d'un vecteur d'unique pour les 2 genes
+ones1 = unique([A;B]);  %creation d'un vecteur d'unique pour les 2 genes
 ones1([length(ones1),length(ones1)-1])=[]; % Supprimer les deux derniere valeurs (qui sont NA et NA)
 
 
@@ -17,27 +15,21 @@ ones1([length(ones1),length(ones1)-1])=[]; % Supprimer les deux derniere valeurs
 
 M_A= zeros(length(ones1));
 
-intA = zeros(length(A),1);
-intB = zeros(length(B),1);
+indA = zeros(length(A),1);
+indB = zeros(length(B),1);
 
 for i = 1 : 1 : length(A)
-    Z = find(ones1==A(i));
-    if ~isempty(Z)
-        intA(i) = Z(1);
-    end;
+    indA(i) = find(ones1 == A(i));
 end;
 
 for i = 1 : 1 : length(B)
-    Z = find(ones1==B(i));
-    if ~isempty(Z)
-        intB(i) = Z(1);
-    end;
+    indB(i) = find(ones1 == B(i));
 end;
 
 for i = 1 : 1 : max(length(A),length(B))
-    if intA(i) ~= 0 && intB(i) ~= 0
-        M_A(intA(i),intB(i)) = M_A(intA(i),intB(i)) + 1;
-        M_A(intB(i),intA(i)) = M_A(intB(i),intA(i)) + 1;
+    if indA(i) ~= 0 && indB(i) ~= 0
+        M_A(indA(i),indB(i)) = M_A(indA(i),indB(i)) + 1;
+        M_A(indB(i),indA(i)) = M_A(indB(i),indA(i)) + 1;
     end;
 end;
 
